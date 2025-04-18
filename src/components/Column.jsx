@@ -107,7 +107,11 @@ const Column = ({ column, boardId, onCardCreated, onColumnUpdated, onColumnDelet
                 ))}
             </ul>
 
-            <CardCreateForm boardId={boardId} columnId={column.id} onCreated={onCardCreated} />
+            <CardCreateForm
+                boardId={boardId}
+                columnId={column.id}
+                onCreated={(newCard) => onCardCreated(column.id, newCard)}
+            />
         </div>
     );
 };
