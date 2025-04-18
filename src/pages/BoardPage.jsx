@@ -29,6 +29,19 @@ const BoardPage = () => {
         }))
     }
 
+    const handleColumnUpdated = (updatedColumn) => {
+        const updatedColumns = board.columns.map(col =>
+            col.id === updatedColumn.id ? updatedColumn : col
+        );
+        setBoard({ ...board, columns: updatedColumns });
+    };
+
+    const handleColumnDeleted = (columnId) => {
+        const updatedColumns = board.columns.filter(col => col.id !== columnId);
+        setBoard({ ...board, columns: updatedColumns });
+    };
+
+
     const handleCardCreated = (columnId, newCard) => {
         setBoard((prev) => ({
             ...prev,
@@ -58,6 +71,8 @@ const BoardPage = () => {
                     columns={board.columns}
                     boardId={board.id}
                     onCardCreated={handleCardCreated}
+                    onColumnUpdated={handleColumnUpdated}
+                    onColumnDeleted={handleColumnDeleted}
                 />
             )}
         </div>

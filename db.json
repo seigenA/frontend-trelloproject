@@ -16,14 +16,6 @@
             {
               "id": 102,
               "title": "Check UI for landing page"
-            },
-            {
-              "title": "впвапв",
-              "id": 1744912667236
-            },
-            {
-              "title": "fdfs",
-              "id": 1744913514243
             }
           ]
         },
@@ -34,26 +26,13 @@
             {
               "id": 103,
               "title": "Regression testing"
-            },
-            {
-              "title": "впвп",
-              "id": 1744912668412
             }
           ]
         },
         {
           "id": 3,
           "title": "Review",
-          "cards": [
-            {
-              "title": "папвап",
-              "id": 1744912662400
-            },
-            {
-              "title": "впавпв",
-              "id": 1744912665388
-            }
-          ]
+          "cards": []
         },
         {
           "id": 4,
@@ -62,17 +41,8 @@
             {
               "id": 104,
               "title": "Smoke testing"
-            },
-            {
-              "title": "впвпвап",
-              "id": 1744912669597
             }
           ]
-        },
-        {
-          "title": "ff",
-          "id": 1744913520192,
-          "cards": []
         }
       ]
     },
@@ -99,27 +69,14 @@
       ]
     },
     {
-      "id": "9ef5",
-      "title": "Test",
-      "description": "Testiruem",
+      "id": "a8f3",
+      "title": "пвпвавпвп",
+      "description": "впвпвп",
       "columns": [
         {
-          "title": "gggg",
-          "id": 1744914390214,
-          "cards": [
-            {
-              "title": "ggg",
-              "id": 1744914391446
-            },
-            {
-              "title": "ggg",
-              "id": 1744914392813
-            },
-            {
-              "title": "gggg",
-              "id": 1744914393991
-            }
-          ]
+          "title": "аппап",
+          "id": 1744950839135,
+          "cards": []
         }
       ]
     }
