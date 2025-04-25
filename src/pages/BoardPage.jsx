@@ -1,61 +1,82 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect } from 'react'
 import { useParams } from 'react-router-dom'
-import { getBoards } from '../api/boards'
+import { useSelector, useDispatch } from 'react-redux'
+import {
+    createColumn,
+    updateColumn,
+    deleteColumn
+} from '../store/columnSlice'
+import {
+    createCard,
+    updateCard,
+    deleteCard
+} from '../store/cardsSlice'
+import { fetchBoardById, updateBoardInState } from '../store/boardSlice'
 import ColumnList from '../components/ColumnList'
 import ColumnCreateForm from '../components/CRUD/ColumnCreateForm'
 
+
 const BoardPage = () => {
     const { boardId } = useParams()
-    const [board, setBoard] = useState(null)
+    const dispatch = useDispatch()
+    const board = useSelector(state => state.boards.current)
 
     useEffect(() => {
-        fetchBoard()
-    }, [boardId])
+        dispatch(fetchBoardById(boardId))
+    }, [dispatch, boardId])
 
-    const fetchBoard = async () => {
-        try {
-            const boards = await getBoards()
-            const found = boards.find((b) => b.id.toString() === boardId)
-            setBoard(found)
-        } catch (err) {
-            alert(err.message)
-        }
+    const handleBoardUpdated = (updatedColumns) => {
+        const newBoard = { ...board, columns: updatedColumns }
+        dispatch(updateBoardInState(newBoard));
+    }
+    const handleUpdateBoard = (newBoard) => {
+        dispatch(updateBoardInState(newBoard))
     }
 
     const handleColumnCreated = (newColumn) => {
-        setBoard((prev) => ({
-            ...prev,
-            columns: [...(prev.columns || []), { ...newColumn, cards: [] }]
-        }))
+        const newBoard = {
+            ...board,
+            columns: [...(board.columns || []), { ...newColumn, cards: [] }]
+        }
+        dispatch(updateBoardInState(newBoard))
     }
 
+
+
     const handleColumnUpdated = (updatedColumn) => {
-        const updatedColumns = board.columns.map(col =>
-            col.id === updatedColumn.id ? updatedColumn : col
-        );
-        setBoard({ ...board, columns: updatedColumns });
-    };
+        dispatch(updateColumn({ board, updatedColumn }))
+    }
 
     const handleColumnDeleted = (columnId) => {
-        const updatedColumns = board.columns.filter(col => col.id !== columnId);
-        setBoard({ ...board, columns: updatedColumns });
-    };
+        dispatch(deleteColumn({ board, columnId }))
+    }
 
 
     const handleCardCreated = (columnId, newCard) => {
-        setBoard((prev) => ({
-            ...prev,
-            columns: prev.columns.map((col) =>
-                col.id === columnId
-                    ? { ...col, cards: [...col.cards, newCard] }
-                    : col
-            )
-        }))
+        const newBoard = { ...board }
+        newBoard.columns = newBoard.columns.map((col) => {
+            if (col.id === columnId) {
+                return {
+                    ...col,
+                    cards: [...col.cards, newCard]
+                }
+            }
+            return col
+        })
+        dispatch(updateBoardInState(newBoard))
     }
 
-    if (!board) {
-        return <p className="p-8 text-gray-500 dark:text-gray-300">Loading...</p>
+
+    const handleCardUpdated = (columnId, updatedCard) => {
+        dispatch(updateCard({ board, columnId, updatedCard }))
     }
+
+    const handleCardDeleted = (columnId, cardId) => {
+        dispatch(deleteCard({ board, columnId, cardId }))
+    }
+
+
+    if (!board) return <p className="p-8 text-gray-500 dark:text-gray-300">Loading...</p>
 
     return (
         <div className="min-h-screen bg-gray-50 dark:bg-gray-900 p-8">
@@ -71,9 +92,13 @@ const BoardPage = () => {
                     columns={board.columns}
                     boardId={board.id}
                     onCardCreated={handleCardCreated}
+                    onCardUpdated={handleCardUpdated}
+                    onCardDeleted={handleCardDeleted}
                     onColumnUpdated={handleColumnUpdated}
                     onColumnDeleted={handleColumnDeleted}
+                    setColumns={(newColumns) => handleBoardUpdated(newColumns)}
                 />
+
             )}
         </div>
     )

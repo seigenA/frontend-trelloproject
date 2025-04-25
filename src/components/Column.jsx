@@ -4,8 +4,16 @@ import ColumnEditForm from "./CRUD/ColumnEditForm";
 import CardCreateForm from "./CRUD/CardCreateForm";
 import CardEditForm from "./CRUD/CardEditForm";
 import { updateCard, deleteCard } from "../api/cards";
+import { Droppable, Draggable } from 'react-beautiful-dnd';
 
-const Column = ({ column, boardId, onCardCreated, onColumnUpdated, onColumnDeleted }) => {
+const Column = ({
+                    column,
+                    boardId,
+                    onCardCreated,
+                    onColumnUpdated,
+                    onColumnDeleted,
+                    dragHandleProps,
+                }) => {
     const [isEditingColumn, setIsEditingColumn] = useState(false);
     const [editingCardId, setEditingCardId] = useState(null);
 
@@ -64,9 +72,13 @@ const Column = ({ column, boardId, onCardCreated, onColumnUpdated, onColumnDelet
                     />
                 ) : (
                     <>
-                        <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-2">
+                        <h2
+                            className="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-2"
+                            {...dragHandleProps}
+                        >
                             {column.title}
                         </h2>
+
                         <div className="space-x-2">
                             <button
                                 onClick={() => setIsEditingColumn(true)}
@@ -85,27 +97,46 @@ const Column = ({ column, boardId, onCardCreated, onColumnUpdated, onColumnDelet
                 )}
             </div>
 
-            <ul className="space-y-2 mb-2">
-                {column.cards.map((card) => (
-                    <li key={card.id} className="p-3 bg-gray-50 dark:bg-gray-700 rounded shadow-sm">
-                        {editingCardId === card.id ? (
-                            <CardEditForm
-                                card={card}
-                                onUpdated={handleUpdateCard}
-                                onCancel={() => setEditingCardId(null)}
-                            />
-                        ) : (
-                            <div className="flex justify-between items-center">
-                                <h3 className="font-medium text-gray-800 dark:text-white">{card.title}</h3>
-                                <div className="space-x-2">
-                                    <button onClick={() => setEditingCardId(card.id)} className="text-blue-500">✏️</button>
-                                    <button onClick={() => handleDeleteCard(card.id)} className="text-red-500">❌</button>
-                                </div>
-                            </div>
-                        )}
-                    </li>
-                ))}
-            </ul>
+            {/* Droppable для карточек */}
+            <Droppable droppableId={column.id.toString()} type="card">
+                {(provided) => (
+                    <ul
+                        className="space-y-2 mb-2 min-h-[20px]"
+                        ref={provided.innerRef}
+                        {...provided.droppableProps}
+                    >
+                        {column.cards.map((card, index) => (
+                            <Draggable key={card.id.toString()} draggableId={card.id.toString()} index={index}>
+                                {(provided) => (
+                                    <li
+                                        ref={provided.innerRef}
+                                        {...provided.draggableProps}
+                                        {...provided.dragHandleProps}
+                                        className="p-3 bg-gray-50 dark:bg-gray-700 rounded shadow-sm"
+                                    >
+                                        {editingCardId === card.id ? (
+                                            <CardEditForm
+                                                card={card}
+                                                onUpdated={handleUpdateCard}
+                                                onCancel={() => setEditingCardId(null)}
+                                            />
+                                        ) : (
+                                            <div className="flex justify-between items-center">
+                                                <h3 className="font-medium text-gray-800 dark:text-white">{card.title}</h3>
+                                                <div className="space-x-2">
+                                                    <button onClick={() => setEditingCardId(card.id)} className="text-blue-500">✏️</button>
+                                                    <button onClick={() => handleDeleteCard(card.id)} className="text-red-500">❌</button>
+                                                </div>
+                                            </div>
+                                        )}
+                                    </li>
+                                )}
+                            </Draggable>
+                        ))}
+                        {provided.placeholder}
+                    </ul>
+                )}
+            </Droppable>
 
             <CardCreateForm
                 boardId={boardId}
